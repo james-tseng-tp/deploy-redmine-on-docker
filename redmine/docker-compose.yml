@@ -1,0 +1,70 @@
+version: '3'
+services:
+  mariadb:
+    image: 'bitnami/mariadb:latest'
+    container_name: redmine-mariadb
+    restart: always
+    ports:
+      - '3306:3306'
+    environment:
+      - ALLOW_EMPTY_PASSWORD=no
+      - MARIADB_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MARIADB_USER=bn_redmine
+      - MARIADB_PASSWORD=${DB_USER_PASSWORD}
+      - MARIADB_DATABASE=bitnami_redmine
+    volumes:
+      - mariadb:/bitnami
+    networks:
+      - net-redmine
+
+  redmine:
+    image: 'bitnami/redmine:4'
+    container_name: redmine-service
+    restart: always
+    environment:
+      - REDMINE_DB_USERNAME=bn_redmine
+      - REDMINE_DB_PASSWORD=${DB_USER_PASSWORD}
+      - REDMINE_DB_NAME=bitnami_redmine
+      - REDMINE_EMAIL=redmine@example.com
+      - REDMINE_USERNAME=${REDMINE_LOGIN_USER}
+      - REDMINE_PASSWORD=${REDMINE_LOGIN_PASSWORD}
+      - SMTP_HOST=smtp.gmail.com
+      - SMTP_PORT=587
+      - SMTP_USER=${SMTP_GMAIL}
+      - SMTP_PASSWORD=${SMTP_GMAIL_PASSWORD}
+    ports:
+      - '80:3000'
+    volumes:
+      - redmine_file:/bitnami
+    depends_on:
+      - mariadb
+    networks:
+      - net-redmine
+
+  phpmyadmin:
+    image: 'bitnami/phpmyadmin:latest'
+    container_name: redmine-phpmyadmin
+    restart: always
+    depends_on:
+      - mariadb
+    ports:
+      - '8081:80'
+      - '8082:443'
+    environment:
+      - DATABASE_HOST=mariadb
+      - MARIADB_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+    volumes:
+      - phpmyadmin:/bitnami
+    networks:
+      - net-redmine
+
+networks:
+  net-redmine:
+
+volumes:
+  mariadb:
+    driver: local
+  redmine_file:
+    driver: local
+  phpmyadmin:
+    driver: local
