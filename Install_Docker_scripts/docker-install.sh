@@ -12,7 +12,9 @@ sudo yum -y install docker-ce docker-ce-cli containerd.io ;
 sleep 1;
 
 sudo systemctl start docker ;
+sudo systemctl enable docker ;
 sudo docker version ;
+sleep 1;
 
 echo "start installing docker-compose";
 
