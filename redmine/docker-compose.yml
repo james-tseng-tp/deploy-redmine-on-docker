@@ -18,10 +18,11 @@ services:
       - net-redmine
 
   redmine:
-    image: 'bitnami/redmine:4'
+    image: 'bitnami/redmine:4.0.5'
     container_name: redmine-service
     restart: always
     environment:
+      - REDMINE_DB_MYSQL=mariadb
       - REDMINE_DB_USERNAME=bn_redmine
       - REDMINE_DB_PASSWORD=${DB_USER_PASSWORD}
       - REDMINE_DB_NAME=bitnami_redmine
